@@ -36,10 +36,38 @@ class View:
         self.txt_titolo = ft.Text(value="Biblioteche di Torino", size=38, weight=ft.FontWeight.BOLD)
 
         # --- Sezione 2: Filtraggio ---
-        # TODO
+        # 1. Dropdown per le biblioteche:
+        # Uso on_select per capire quando l'utente sceglie una voce
+        self.dd_biblioteca = ft.Dropdown(
+            label="Biblioteca",
+            width=300,
+            on_select=self.controller.seleziona_biblioteca
+        )
+
+        # 2. Dropdown per i generi
+        self.dd_genere = ft.Dropdown(
+            label="Genere",
+            width=300,
+            on_select=self.controller.seleziona_genere
+        )
+
+        # 3. Popolo le opzioni dei dropdown tramite il controller
+        self.controller.popola_dropdown()
 
         # Sezione 3: Libri
-        # TODO
+        # Pulsante per avviare la ricerca dei libri filtrati
+        self.btn_mostra_libri = ft.Button(
+            content="Mostra Libri",
+            on_click=self.controller.mostra_libri
+        )
+
+        # ListView per contenere l'elenco dei libri
+        self.lista_libri = ft.ListView(
+            expand=True,
+            spacing=5,
+            padding=10,
+            auto_scroll=True
+        )
 
         # --- Toggle Tema ---
         self.toggle_cambia_tema = ft.Switch(label="Tema scuro", value=True, on_change=self.cambia_tema)
@@ -53,10 +81,22 @@ class View:
             ft.Divider(),
 
             # Sezione 2: Filtraggio
-            # TODO
+            ft.Row(
+                controls=[
+                    self.dd_biblioteca,
+                    self.dd_genere
+                ],
+                alignment=ft.MainAxisAlignment.CENTER,
+                spacing=20
+            ),
+            ft.Divider(),
 
             # Sezione 3: Libri
-            # TODO
+            ft.Row(
+                controls=[self.btn_mostra_libri],
+                alignment=ft.MainAxisAlignment.CENTER
+            ),
+            self.lista_libri
         )
 
         self.page.scroll = "adaptive"
