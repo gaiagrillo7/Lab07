@@ -16,13 +16,38 @@ class Model:
     # --- LIBRI ---
     def get_libri_filtrati(self, biblioteca:str, genere:str):
         """Restituisce la lista di tutti i libri filtrati per biblioteca e/o genere (filtri opzionali)."""
-        # TODO
+        # 1. Normalizzo il filtro della biblioteca:
+        # Se l'utente ha scelto "Nessun filtro" (o il valore è vuoto/None), passiamo None al DAO
+        id_biblioteca = None
+        if biblioteca and biblioteca != "Nessun filtro":
+            try:
+                id_biblioteca = int(biblioteca)
+            except ValueError:
+                # Se per caso viene passato il nome o una stringa non numerica,
+                # cerchiamo l'id corrispondente tra le biblioteche
+                biblioteche = self._biblioteca_dao.get_all_biblioteche()
+                if biblioteche:
+                    for b in biblioteche:
+                        if b.nome == biblioteca or str(b.id) == biblioteca:
+                            id_biblioteca = b.id
+                            break
+
+        # 2. Normalizzo il filtro del genere:
+        # Se l'utente ha scelto "Nessun filtro" (o il valore è vuoto/None), passiamo None al DAO
+        filtro_genere = None
+        if genere and genere != "Nessun filtro":
+            filtro_genere = genere
+
+        # 3. Interrogo il DAO passando i filtri normalizzati (None attiva COALESCE in SQL)
+        return self._libro_dao.get_libri_filtrati(id_biblioteca, filtro_genere)
 
     def get_generi(self):
         """Restituisce la lista di tutti i generi."""
-        # TODO
+        return self._libro_dao.get_all_generi()
 
     # --- BIBLIOTECHE ---
     def get_biblioteche(self):
         """ Restituisce la lista di tutte le biblioteche."""
-        # TODO
+        return self._biblioteca_dao.get_all_biblioteche()
+
+
